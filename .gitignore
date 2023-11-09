@@ -1,8 +1,15 @@
+*.properties
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+*.crt 
+*.pem 
+*.p12
+*.jks
+*.key
 
 ### STS ###
 .apt_generated
