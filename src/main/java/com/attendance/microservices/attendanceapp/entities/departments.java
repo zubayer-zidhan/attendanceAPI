@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "departments")
-
 public class departments {
     @Id
     private int id;
+    
     private String name;
 }
