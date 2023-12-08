@@ -13,7 +13,7 @@
 // @NoArgsConstructor
 // @Entity
 // @Table(name = "attendance")
-// public class attendance {
+// public class Attendance {
 
 //     private String rollNo;
 //     private int subjectId;
