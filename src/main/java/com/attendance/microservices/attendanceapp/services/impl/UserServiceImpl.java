@@ -5,12 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.attendance.microservices.attendanceapp.entities.Users;
-import com.attendance.microservices.attendanceapp.repository.UsersRepository;
+import com.attendance.microservices.attendanceapp.repository.UserRepository;
 import com.attendance.microservices.attendanceapp.services.UserService;
 
 public class UserServiceImpl implements UserService {
     @Autowired
-    UsersRepository usersRepository;
+    UserRepository usersRepository;
 
     @Override
     public List<Users> getUsersDetails() { 

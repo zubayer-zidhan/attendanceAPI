@@ -24,6 +24,6 @@ public class Teachers {
 
     private String name;
 
-    @Column(name = "teacher_id")
+    @Column(name = "dept_id")
     private int deptId;
 }
