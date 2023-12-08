@@ -13,7 +13,7 @@ import com.attendance.microservices.attendanceapp.services.SubjectService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("api/subjects")
+@RequestMapping("api/v1/subjects")
 public class SubjectController {
     @Autowired
     SubjectService subjectService;

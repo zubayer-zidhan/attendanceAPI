@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @CrossOrigin
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("api/v1/users")
 public class UserController {
     @Autowired
     UserService userService;
@@ -22,5 +22,4 @@ public class UserController {
     public List<Users> getUserDetails(){
         return userService.getUsersDetails();
     }
-    
 }

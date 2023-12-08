@@ -13,7 +13,7 @@ import com.attendance.microservices.attendanceapp.services.StudentsService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("api/students")
+@RequestMapping("api/v1/students")
 public class StudentController {
     @Autowired
     StudentsService studentsService;

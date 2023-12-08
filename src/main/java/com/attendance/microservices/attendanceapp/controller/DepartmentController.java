@@ -13,7 +13,7 @@ import com.attendance.microservices.attendanceapp.services.DepartmentService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("api/departments")
+@RequestMapping("api/v1/departments")
 public class DepartmentController {
     @Autowired
     DepartmentService departmentService;

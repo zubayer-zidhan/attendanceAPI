@@ -13,7 +13,7 @@ import com.attendance.microservices.attendanceapp.services.TeacherService;
 
 @CrossOrigin
 @RestController
-@RequestMapping("api/teachers")
+@RequestMapping("api/v1/teachers")
 public class TeacherController {
     @Autowired
     TeacherService teacherService;
