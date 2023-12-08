@@ -1,7 +1,10 @@
 package com.attendance.microservices.attendanceapp.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +21,14 @@ public class Subjects {
     private String id;
 
     private String name;
-    private int deptId;
+
+    @ManyToOne
+    @JoinColumn(name = "dept_id", referencedColumnName = "id")
+    private Departments department;
+
     private int semester;
-    private int teacherId;
+    
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
+    private Teachers teacher;
 }

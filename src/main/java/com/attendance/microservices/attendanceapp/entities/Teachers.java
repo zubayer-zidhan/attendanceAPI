@@ -1,5 +1,6 @@
 package com.attendance.microservices.attendanceapp.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,5 +23,7 @@ public class Teachers {
     private int id;
 
     private String name;
+
+    @Column(name = "teacher_id")
     private int deptId;
 }
