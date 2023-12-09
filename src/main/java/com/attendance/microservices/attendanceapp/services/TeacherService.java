@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.attendance.microservices.attendanceapp.entities.Teachers;
+import com.attendance.microservices.attendanceapp.dto.TeacherDetailsResponse;
 @Service
 public interface TeacherService {
-    public List<Teachers> getTeacherDetails();
+    public List<TeacherDetailsResponse> getTeacherDetails(String username);
 }

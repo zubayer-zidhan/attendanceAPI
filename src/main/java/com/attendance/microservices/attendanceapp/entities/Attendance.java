@@ -1,6 +1,7 @@
 package com.attendance.microservices.attendanceapp.entities;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -21,7 +22,8 @@ import lombok.NoArgsConstructor;
 public class Attendance {
 
     @Id
-    private String rollNo;
+    @Column(name = "roll_number")
+    private String rollNumber;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", referencedColumnName = "id")

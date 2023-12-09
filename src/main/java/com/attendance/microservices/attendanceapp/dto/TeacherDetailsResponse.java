@@ -1,4 +1,4 @@
-package com.attendance.microservices.attendanceapp.auth;
+package com.attendance.microservices.attendanceapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-
-  private String token;
-  private String name;
+public class TeacherDetailsResponse {
+    String department;
+    String subject;
+    int semester; 
 }
