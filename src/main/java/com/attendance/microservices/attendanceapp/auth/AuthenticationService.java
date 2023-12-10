@@ -40,8 +40,9 @@ public class AuthenticationService {
     @Autowired
     AuthenticationManager authenticationManager;
 
-    public ResponseEntity<?> register(RegisterRequest request) {
 
+    // REGISTER
+    public ResponseEntity<?> register(RegisterRequest request) {
         // Check if user already exists
         // If exists -> return BAD_REQUEST
         // Else add user, return token
@@ -68,7 +69,12 @@ public class AuthenticationService {
         }
     }
 
+
+
+    // AUTHENTICATION
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+
+        System.out.println(request);
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

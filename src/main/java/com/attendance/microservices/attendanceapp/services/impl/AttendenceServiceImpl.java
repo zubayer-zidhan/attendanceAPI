@@ -28,8 +28,6 @@ public class AttendenceServiceImpl implements AttendanceService{
     @Override
     public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectId(String subjectId) {
 
-        System.out.println(subjectId);
-
         List<Attendance> attendanceList = attendanceRepository.findAllBySubjectIdOrderByStudentRollNumber(subjectId);
 
         Map<String, AttendanceDetailsSubjectResponse> studentAttendanceMap = new HashMap<>();
