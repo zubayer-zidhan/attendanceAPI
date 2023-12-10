@@ -5,11 +5,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.attendance.microservices.attendanceapp.dto.AttendanceDetailsSubjectResponse;
 import com.attendance.microservices.attendanceapp.entities.Attendance;
 import com.attendance.microservices.attendanceapp.services.AttendanceService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @CrossOrigin
 @RestController
@@ -22,4 +26,12 @@ public class AttendanceController {
     public List <Attendance> getAttendanceDetails(){
         return attendanceService.getAttendanceDetails();
     }
+
+    @GetMapping("/details/{subjectId}")
+    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectId(
+        @PathVariable String subjectId
+    ){
+        return attendanceService.getAttendanceDetailsBySubjectId(subjectId);
+    }
+    
 }

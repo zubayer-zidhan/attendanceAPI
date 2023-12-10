@@ -1,17 +1,20 @@
 package com.attendance.microservices.attendanceapp.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeacherDetailsResponse {
-    String department;
-    String subject;
-    String subjectId;
-    int semester; 
+public class AttendanceDetailsSubjectResponse {
+   String name;
+   String rollNumber;
+   List<AttendanceDataDTO> attendance;
+
 }

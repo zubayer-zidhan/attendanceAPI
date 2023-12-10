@@ -1,8 +1,9 @@
 package com.attendance.microservices.attendanceapp.entities;
 
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -22,8 +23,12 @@ import lombok.NoArgsConstructor;
 public class Attendance {
 
     @Id
-    @Column(name = "roll_number")
-    private String rollNumber;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
+    @ManyToOne
+    @JoinColumn(name = "roll_number", referencedColumnName = "roll_number")
+    private Students student;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", referencedColumnName = "id")

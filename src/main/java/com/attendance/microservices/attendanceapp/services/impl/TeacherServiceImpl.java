@@ -43,6 +43,7 @@ public class TeacherServiceImpl implements TeacherService {
                     .department(subject.getDepartment().getName())
                     .semester(subject.getSemester())
                     .subject(subject.getName())
+                    .subjectId(subject.getId())
                     .build();
                 
                 teacherDetails.add(tempResponse);
