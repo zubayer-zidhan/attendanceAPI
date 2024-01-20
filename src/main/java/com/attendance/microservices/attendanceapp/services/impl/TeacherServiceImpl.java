@@ -28,30 +28,31 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<TeacherDetailsResponse> getTeacherDetails(String username) {
 
-        Teachers teacher = teachersRepository.findFirstByUserUsername(username);
+        // Teachers teacher = teachersRepository.findFirstByUserUsername(username);
 
-        if (teacher == null) {
-            return null;
-        } else {
+        // if (teacher == null) {
+        //     return null;
+        // } else {
 
-            List<Subjects> subjectsList = subjectsRepository.findAllByTeacherId(teacher.getId());
-            List<TeacherDetailsResponse> teacherDetails = new ArrayList<>();
+        //     List<Subjects> subjectsList = subjectsRepository.findAllByTeacherId(teacher.getId());
+        //     List<TeacherDetailsResponse> teacherDetails = new ArrayList<>();
 
 
-            for(Subjects subject : subjectsList) {
-                TeacherDetailsResponse tempResponse = TeacherDetailsResponse.builder()
-                    .department(subject.getDepartment().getName())
-                    .semester(subject.getSemester())
-                    .subject(subject.getName())
-                    .subjectId(subject.getId())
-                    .build();
+        //     for(Subjects subject : subjectsList) {
+        //         TeacherDetailsResponse tempResponse = TeacherDetailsResponse.builder()
+        //             .department(subject.getDepartment().getName())
+        //             .semester(subject.getSemester())
+        //             .subject(subject.getName())
+        //             .subjectId(subject.getId())
+        //             .build();
                 
-                teacherDetails.add(tempResponse);
-            }
+        //         teacherDetails.add(tempResponse);
+        //     }
 
-            return teacherDetails;
+        //     return teacherDetails;
 
 
-        }
+        // }
+        return null;
     }
 }

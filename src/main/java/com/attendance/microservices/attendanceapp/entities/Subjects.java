@@ -28,7 +28,4 @@ public class Subjects {
 
     private int semester;
     
-    @ManyToOne
-    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
-    private Teachers teacher;
 }
