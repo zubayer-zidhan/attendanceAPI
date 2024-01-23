@@ -28,50 +28,43 @@ public class AttendenceServiceImpl implements AttendanceService{
     @Override
     public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectId(String subjectId) {
 
-        // List<Attendance> attendanceList = attendanceRepository.findAllBySubjectIdOrderByStudentRollNumber(subjectId);
+        List<Attendance> attendanceList = attendanceRepository.findAllBySubjectIdOrderByStudentRollNumber(subjectId);
 
-        // Map<String, AttendanceDetailsSubjectResponse> studentAttendanceMap = new HashMap<>();
+        Map<String, AttendanceDetailsSubjectResponse> studentAttendanceMap = new HashMap<>();
 
-        // for (Attendance attendance : attendanceList) {
-        //     // Check if the student is already in the map
-        //     if (studentAttendanceMap.containsKey(attendance.getStudent().getRollNumber())) {
-        //         // If yes, add the attendance data to the existing entry
-        //         AttendanceDetailsSubjectResponse existingDetails = studentAttendanceMap.get(attendance.getStudent().getRollNumber());
-        //         AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
-        //                 .date(attendance.getDate())
-        //                 .present(attendance.isPresent())
-        //                 .build();
+        for (Attendance attendance : attendanceList) {
+            // Check if the student is already in the map
+            if (studentAttendanceMap.containsKey(attendance.getStudent().getRollNumber())) {
+                // If yes, add the attendance data to the existing entry
+                AttendanceDetailsSubjectResponse existingDetails = studentAttendanceMap.get(attendance.getStudent().getRollNumber());
+                AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
+                        .date(attendance.getDate())
+                        .present(attendance.isPresent())
+                        .build();
         
-        //         existingDetails.getAttendance().add(tempDTO);
-        //     } else {
-        //         // If no, create a new entry for the student
-        //         List<AttendanceDataDTO> tempList = new ArrayList<>();
-        //         AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
-        //                 .date(attendance.getDate())
-        //                 .present(attendance.isPresent())
-        //                 .build();
-        //         tempList.add(tempDTO);
+                existingDetails.getAttendance().add(tempDTO);
+            } else {
+                // If no, create a new entry for the student
+                List<AttendanceDataDTO> tempList = new ArrayList<>();
+                AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
+                        .date(attendance.getDate())
+                        .present(attendance.isPresent())
+                        .build();
+                tempList.add(tempDTO);
         
-        //         AttendanceDetailsSubjectResponse temp = AttendanceDetailsSubjectResponse.builder()
-        //                 .name(attendance.getStudent().getName())
-        //                 .attendance(tempList)
-        //                 .rollNumber(attendance.getStudent().getRollNumber())
-        //                 .build();
+                AttendanceDetailsSubjectResponse temp = AttendanceDetailsSubjectResponse.builder()
+                        .name(attendance.getStudent().getName())
+                        .attendance(tempList)
+                        .rollNumber(attendance.getStudent().getRollNumber())
+                        .build();
         
-        //         studentAttendanceMap.put(attendance.getStudent().getRollNumber(), temp);
-        //     }
-        // }
+                studentAttendanceMap.put(attendance.getStudent().getRollNumber(), temp);
+            }
+        }
         
-        // // Convert the values of the map to a list
-        // List<AttendanceDetailsSubjectResponse> attendanceDetails = new ArrayList<>(studentAttendanceMap.values());
+        // Convert the values of the map to a list
+        List<AttendanceDetailsSubjectResponse> attendanceDetails = new ArrayList<>(studentAttendanceMap.values());
         
-        // return attendanceDetails;
-
-
-        return null;
-
-
+        return attendanceDetails;
     } 
-    
-    
 }

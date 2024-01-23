@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.attendance.microservices.attendanceapp.dto.AttendanceDetailsSubjectResponse;
 import com.attendance.microservices.attendanceapp.entities.Attendance;
 import com.attendance.microservices.attendanceapp.services.AttendanceService;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @CrossOrigin
