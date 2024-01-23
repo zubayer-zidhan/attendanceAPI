@@ -20,9 +20,9 @@ public class TeacherController {
     TeacherService teacherService;
 
     @GetMapping("/details/{username}")
-    public List<TeacherDetailsResponse> getTeacherDetails(
+    public List<TeacherDetailsResponse> getTeacherSubjects(
         @PathVariable String username
     ){
-        return teacherService.getTeacherDetails(username);
+        return teacherService.getTeacherSubjects(username);
     }
 }
