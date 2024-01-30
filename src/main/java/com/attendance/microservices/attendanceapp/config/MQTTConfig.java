@@ -34,44 +34,4 @@ public class MQTTConfig {
         System.out.println("Message Published Successfully.");
 
     }
-
-
-
-
-    // *********** Not Recommended Approach ************
-    // @Value("${aws.iot.clientEndpoint}")
-    // String clientEndpoint;
-
-    // @Value("${aws.iot.clientId}")
-    // String clientId;
-
-    // @Value("${aws.iot.accessKeyId}")
-    // String awsAccessKeyId;
-
-    // @Value("${aws.iot.secretAccessKey}")
-    // String awsSecretAccessKey;
-
-
-    // // Connection to client
-    // AWSIotMqttClient client = null;
-
-
-    // public void connectToAWS() throws AWSIotException {
-    //     // AWS IAM credentials could be retrieved from AWS Cognito, STS, or other secure sources
-    //     client = new AWSIotMqttClient(clientEndpoint, clientId, awsAccessKeyId, awsSecretAccessKey, null);
-
-    //     // optional parameters can be set before connect()
-    //     client.connect();
-    //     System.out.println("Connected to AWS IoT.");
-    // }
-
-
-    // public void publish(String payload) throws AWSIotException, JsonProcessingException {
-    //     String topic = "attendanceTest";
-    //     AWSIotQos qos = AWSIotQos.QOS0;
-    //     long timeout = 3000; // milliseconds
-
-    //     MyMessage message = new MyMessage(topic, qos, payload);
-    //     client.publish(message, timeout);
-    // }
 }

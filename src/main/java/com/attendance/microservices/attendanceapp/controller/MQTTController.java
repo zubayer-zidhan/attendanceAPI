@@ -22,13 +22,6 @@ public class MQTTController {
     @Autowired
     MQTTConfig mqttConfig;
 
-    // @PostMapping("/publish")
-    // public String publishMessage(@RequestBody TestPayload payload) throws AWSIotException, JsonProcessingException {
-    //     mqttService.publishMessage(payload);
-
-    //     return "Message published successfully.";
-    // }
-
     @PostMapping("/publishToShadow")
     public String publishMessage(@RequestBody TestPayload payload) throws IOException {
         mqttConfig.publishToShadow();
