@@ -1,5 +1,37 @@
-{"properties": [{
-  "name": "application.security.jwt.secret-key",
-  "type": "java.lang.String",
-  "description": "A description for 'application.security.jwt.secret-key'"
-}]}
+{"properties": [
+  {
+    "name": "application.security.jwt.secret-key",
+    "type": "java.lang.String",
+    "description": "A description for 'application.security.jwt.secret-key'"
+  },
+  {
+    "name": "aws.access-key-id",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.iot.access-key-id'"
+  },
+  {
+    "name": "aws.clientEndpoint",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.iot.clientEndpoint'"
+  },
+  {
+    "name": "aws.clientId",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.iot.clientId'"
+  },
+  {
+    "name": "aws.secretAccessKey",
+    "type": "java.lang.String",
+    "description": "A description for 'aws.iot.secretAccessKey'"
+  },
+  {
+    "name": "mqtt.topic.control",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topic.control'"
+  },
+  {
+    "name": "mqtt.topic.data",
+    "type": "java.lang.String",
+    "description": "A description for 'mqtt.topic.data'"
+  }
+]}
