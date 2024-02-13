@@ -6,11 +6,15 @@ import org.springframework.context.annotation.Configuration;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import software.amazon.awssdk.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.iot.AWSIot;
 import com.amazonaws.services.iot.AWSIotClientBuilder;
 import com.amazonaws.services.iotdata.AWSIotDataClient;
 import com.amazonaws.services.iotdata.AWSIotDataClientBuilder;
+
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.services.sns.SnsClient;
 
 @Configuration
 public class AwsConfig {
@@ -41,5 +45,16 @@ public class AwsConfig {
                 .withRegion(Regions.AP_SOUTH_1)
                 .build();
 
+    }
+
+
+    @Bean
+    public SnsClient getSnsClient(final AwsAppConfig awsAppConfig) {
+        return SnsClient.builder()
+                .credentialsProvider((AwsCredentialsProvider) new AWSStaticCredentialsProvider(
+                    (new BasicAWSCredentials(awsAppConfig.getAwsAccessKeyId(), awsAppConfig.getAwsSecretAccessKey()))
+                ))
+                .region(Region.AP_SOUTH_1)
+                .build();
     }
 }
