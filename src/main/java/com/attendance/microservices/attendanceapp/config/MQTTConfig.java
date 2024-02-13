@@ -6,9 +6,12 @@ import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import com.amazonaws.services.iot.model.AWSIotException;
 import com.amazonaws.services.iotdata.model.PublishRequest;
 
+
 import io.jsonwebtoken.io.IOException;
+import software.amazon.awssdk.services.sns.SnsClient;
 
 @Configuration
 public class MQTTConfig {
@@ -18,6 +21,9 @@ public class MQTTConfig {
 
     @Autowired
     private AwsAppConfig awsAppConfig;
+
+    @Autowired
+    SNSTopicSubscriber snsTopicSubscriber;
 
     public void publishToShadow() throws IOException {
         String topic = "$aws/things/AttendanceTaker/shadow/name/barcode_attendance/update";
@@ -33,5 +39,19 @@ public class MQTTConfig {
         awsConfig.getIotDataClient(awsAppConfig).publish(publishRequest);
         System.out.println("Message Published Successfully.");
 
+    }
+
+
+
+    public void subscribeToTopic() throws AWSIotException {
+        String topicArn = "";
+        String requestEndpoint = "";
+
+
+        SnsClient snsClient = awsConfig.getSnsClient(awsAppConfig);
+
+
+        snsTopicSubscriber.subscribeToEndpoint(topicArn, requestEndpoint, snsClient);
+        // awsConfig.getIotClient(awsAppConfig).subscribe();
     }
 }
