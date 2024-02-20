@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attendance.microservices.attendanceapp.dto.AttendanceDetailsSubjectResponse;
+import com.attendance.microservices.attendanceapp.dto.AttendanceRecordRequestDTO;
 import com.attendance.microservices.attendanceapp.dto.AttendanceSubjectDetails;
 import com.attendance.microservices.attendanceapp.entities.Attendance;
 import com.attendance.microservices.attendanceapp.services.AttendanceService;
@@ -75,6 +76,18 @@ public class AttendanceController {
         System.out.println(attendanceService.getSubjectContext());
 
         return ResponseEntity.ok("Attendance stopped.");
+    }
+    
+
+    // Handle incoming attendance requests
+    @PostMapping("/publish")
+    public String publishAttendanceRecord(@RequestBody AttendanceRecordRequestDTO request) {
+        
+        System.out.println(request);
+
+        attendanceService.processIncomingIds(request);
+        
+        return "SUCCESS";
     }
     
 }

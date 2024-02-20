@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class AttendanceSubjectDetails {
-   String subjectID;
-   String date;
-   boolean proxy;
+@NoArgsConstructor
+public class AttendanceRecordRequestDTO {
+    String studentID;
 }

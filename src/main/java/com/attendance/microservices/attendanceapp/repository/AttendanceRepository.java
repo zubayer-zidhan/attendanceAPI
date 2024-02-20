@@ -8,4 +8,5 @@ import com.attendance.microservices.attendanceapp.entities.Attendance;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
    List<Attendance> findAllBySubjectIdOrderByStudentRollNumber(String subjectId);
+   List<Attendance> findAllBySubjectIdAndDate(String subjectId, String date);
 }
