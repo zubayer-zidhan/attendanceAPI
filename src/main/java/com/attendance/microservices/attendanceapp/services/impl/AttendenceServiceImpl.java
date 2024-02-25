@@ -31,6 +31,7 @@ public class AttendenceServiceImpl implements AttendanceService {
     private boolean takingAttendance = false;
     private AttendanceSubjectDetails subjectContext;
 
+
     @Autowired
     AttendanceRepository attendanceRepository;
 
@@ -101,7 +102,8 @@ public class AttendenceServiceImpl implements AttendanceService {
 
 
                 // Save the attendance record
-                attendanceRepository.save(absentAttendance);
+                // attendanceRepository.save(absentAttendance);
+                System.out.println("Absent: " + absentAttendance);
             }
         }
     }
@@ -200,7 +202,8 @@ public class AttendenceServiceImpl implements AttendanceService {
                 .build();
 
         
-        attendanceRepository.save(newAttendance);
+        // attendanceRepository.save(newAttendance);
+        System.out.println(newAttendance);
     }
 
     // On "STOP", stop taking attendance
