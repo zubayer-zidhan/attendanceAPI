@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttendanceSubjectDetails {
-   String subjectID;
-   String date;
-   boolean proxy;
+public class IotSignalDTO {
+    private String message;
 }
