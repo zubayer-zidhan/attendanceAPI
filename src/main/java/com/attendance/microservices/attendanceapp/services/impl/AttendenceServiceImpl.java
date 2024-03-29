@@ -161,6 +161,52 @@ public class AttendenceServiceImpl implements AttendanceService {
         return attendanceDetails;
     }
 
+
+    // Get Attendance Data by Subject and Date
+    @Override
+    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(String subjectId, String date) {
+
+        List<Attendance> attendanceList = attendanceRepository.findAllBySubjectIdAndDate(subjectId, date);
+
+        Map<String, AttendanceDetailsSubjectResponse> studentAttendanceMap = new HashMap<>();
+
+        for (Attendance attendance : attendanceList) {
+            // Check if the student is already in the map
+            if (studentAttendanceMap.containsKey(attendance.getStudent().getRollNumber())) {
+                // If yes, add the attendance data to the existing entry
+                AttendanceDetailsSubjectResponse existingDetails = studentAttendanceMap
+                        .get(attendance.getStudent().getRollNumber());
+                AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
+                        .date(attendance.getDate())
+                        .present(attendance.isPresent())
+                        .build();
+
+                existingDetails.getAttendance().add(tempDTO);
+            } else {
+                // If no, create a new entry for the student
+                List<AttendanceDataDTO> tempList = new ArrayList<>();
+                AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
+                        .date(attendance.getDate())
+                        .present(attendance.isPresent())
+                        .build();
+                tempList.add(tempDTO);
+
+                AttendanceDetailsSubjectResponse temp = AttendanceDetailsSubjectResponse.builder()
+                        .name(attendance.getStudent().getName())
+                        .attendance(tempList)
+                        .rollNumber(attendance.getStudent().getRollNumber())
+                        .build();
+
+                studentAttendanceMap.put(attendance.getStudent().getRollNumber(), temp);
+            }
+        }
+
+        // Convert the values of the map to a list
+        List<AttendanceDetailsSubjectResponse> attendanceDetails = new ArrayList<>(studentAttendanceMap.values());
+
+        return attendanceDetails;
+    }
+
     // Process Incoming IDs from the IoT device
     @Override
     public void processIncomingIds(AttendanceRecordRequestDTO request) {

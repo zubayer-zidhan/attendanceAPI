@@ -20,6 +20,7 @@ public interface AttendanceService {
 
     public List<Attendance> getAttendanceDetails();
     public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectId(String subjectId);
+    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(String subjectI, String date);
 
     public boolean getTakingAttendance();
     public AttendanceSubjectDetails getSubjectContext();

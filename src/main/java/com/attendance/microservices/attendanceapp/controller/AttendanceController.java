@@ -42,6 +42,15 @@ public class AttendanceController {
         return attendanceService.getAttendanceDetailsBySubjectId(subjectId);
     }
 
+
+    @GetMapping("/details/{subjectId}/{date}")
+    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(
+            @PathVariable String subjectId,
+            @PathVariable String date
+            ) {
+        return attendanceService.getAttendanceDetailsBySubjectIdAndDate(subjectId, date);
+    }
+
     // Start taking attendance
     @PostMapping("/takeAttendance")
     public ResponseEntity<String> takeAttendance(@RequestBody AttendanceSubjectDetails subjectDetails) {
@@ -84,7 +93,7 @@ public class AttendanceController {
 
         System.out.println(request);
 
-        attendanceService.processIncomingIds(request);
+        // attendanceService.processIncomingIds(request);
 
         return "SUCCESS";
     }
