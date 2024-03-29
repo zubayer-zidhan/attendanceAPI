@@ -42,12 +42,10 @@ public class AttendanceController {
         return attendanceService.getAttendanceDetailsBySubjectId(subjectId);
     }
 
-
     @GetMapping("/details/{subjectId}/{date}")
     public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(
             @PathVariable String subjectId,
-            @PathVariable String date
-            ) {
+            @PathVariable String date) {
         return attendanceService.getAttendanceDetailsBySubjectIdAndDate(subjectId, date);
     }
 
@@ -57,17 +55,21 @@ public class AttendanceController {
 
         // Save subjectDetails in a context variable or database
         // This context will be used to associate incoming IDs with subject details
-        attendanceService.startTakingAttendance();
-        attendanceService.setSubjectContext(subjectDetails);
+        if (!attendanceService.getTakingAttendance()) {
+            attendanceService.startTakingAttendance();
+            attendanceService.setSubjectContext(subjectDetails);
 
-        System.out.println(attendanceService.getTakingAttendance());
-        System.out.println(attendanceService.getSubjectContext());
+            System.out.println(attendanceService.getTakingAttendance());
+            System.out.println(attendanceService.getSubjectContext());
 
-        // Send the "ON" signal to the IoT device
-        IotSignalDTO onSignal = IotSignalDTO.builder().message("ON").build();
-        messagingTemplate.convertAndSend("/topic/signal", onSignal);
+            // Send the "ON" signal to the IoT device
+            IotSignalDTO onSignal = IotSignalDTO.builder().message("ON").build();
+            messagingTemplate.convertAndSend("/topic/signal", onSignal);
 
-        return ResponseEntity.ok("Attendance started.");
+            return ResponseEntity.ok("Attendance started.");
+        }
+        return ResponseEntity.ok("Already Taking Attendance.");
+
     }
 
     // Stop taking attendance
