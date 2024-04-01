@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +33,7 @@ public class AttendenceServiceImpl implements AttendanceService {
 
     private boolean takingAttendance = false;
     private AttendanceSubjectDetails subjectContext;
-
+    private Map<String, Long> recentRollNumbers = new ConcurrentHashMap<>();
 
     @Autowired
     AttendanceRepository attendanceRepository;
@@ -71,7 +74,37 @@ public class AttendenceServiceImpl implements AttendanceService {
     public boolean getTakingAttendance() {
         return this.takingAttendance;
     }
-    
+
+    // Method to validate the request and prevent duplicate submissions
+    public boolean isDuplicateRequest(String rollNumber) {
+        // Check if the roll number exists in the cache
+        if (recentRollNumbers.containsKey(rollNumber)) {
+            // If the roll number exists, check the time difference
+            long previousTime = recentRollNumbers.get(rollNumber);
+            long currentTime = System.currentTimeMillis();
+            long elapsedTime = currentTime - previousTime;
+
+            // Define your threshold for duplicate submissions(here, 30 mins)
+            long threshold = TimeUnit.MINUTES.toMillis(30);
+
+            // If the time difference is within the threshold, consider it a duplicate
+            // request
+            if (elapsedTime <= threshold) {
+                return true; // Duplicate request
+            }
+        }
+
+        // If the roll number is not in the cache or the time difference exceeds the
+        // threshold, it's not a duplicate request
+        // Update the cache with the current timestamp
+        recentRollNumbers.put(rollNumber, System.currentTimeMillis());
+        return false;
+    }
+
+    // Method to clean up the cache
+    public void clearCache() {
+        recentRollNumbers.clear();
+    }
 
     // Mark the remainder of students as absent
     private void markAbsentForCurrentDate(String subjectID, String currentDate, boolean proxy) {
@@ -82,25 +115,26 @@ public class AttendenceServiceImpl implements AttendanceService {
         // Retrieve all subjects (assuming you have a method to fetch all subjects)
         List<StudentSubjects> studentSubjectsList = studentSubjectsRepository.findAllBySubjectId(subjectID);
 
-        // Get the roll numbers of students who are present for this subject on the current date
+        // Get the roll numbers of students who are present for this subject on the
+        // current date
         List<String> presentRollNumbers = attendanceRecords.stream()
-                                            .map(attendance -> attendance.getStudent().getRollNumber())
-                                            .collect(Collectors.toList());
+                .map(attendance -> attendance.getStudent().getRollNumber())
+                .collect(Collectors.toList());
 
-
-        // Mark students as absent if their roll number is not in the list of present roll numbers
+        // Mark students as absent if their roll number is not in the list of present
+        // roll numbers
         for (StudentSubjects studentSubject : studentSubjectsList) {
             if (!presentRollNumbers.contains(studentSubject.getStudent().getRollNumber())) {
                 // Create new attendance record for absent student
                 Attendance absentAttendance = Attendance.builder()
-                                                    .student(studentSubject.getStudent())
-                                                    .subject(studentSubject.getSubject())
-                                                    .date(currentDate)
-                                                    .present(false)
-                                                    .proxy(proxy)
-                                                    .build();
+                        .student(studentSubject.getStudent())
+                        .subject(studentSubject.getSubject())
+                        .date(currentDate)
+                        .present(false)
+                        .proxy(proxy)
+                        .build();
 
-
+                // TODO: Uncomment to save absent record
                 // Save the attendance record
                 // attendanceRepository.save(absentAttendance);
                 System.out.println("Absent: " + absentAttendance);
@@ -108,13 +142,11 @@ public class AttendenceServiceImpl implements AttendanceService {
         }
     }
 
-
     // Convert idCard(barcode ID) to student roll number
     // TODO: Implement the converter
     private String convertIdToRoll(String id) {
         return id;
     }
-
 
     // Get Attendance Data by Subject
     @Override
@@ -161,10 +193,10 @@ public class AttendenceServiceImpl implements AttendanceService {
         return attendanceDetails;
     }
 
-
     // Get Attendance Data by Subject and Date
     @Override
-    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(String subjectId, String date) {
+    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(String subjectId,
+            String date) {
 
         List<Attendance> attendanceList = attendanceRepository.findAllBySubjectIdAndDate(subjectId, date);
 
@@ -209,19 +241,31 @@ public class AttendenceServiceImpl implements AttendanceService {
 
     // Process Incoming IDs from the IoT device
     @Override
-    public void processIncomingIds(AttendanceRecordRequestDTO request) {
-        // Check if subjectContext is set
-        if (takingAttendance && subjectContext != null) {
-            // Associate studentIds with subject details and update the attendance table
-            String rollNumber = convertIdToRoll(request.getStudentID());
-            publishAttendance(subjectContext, rollNumber);
-        } else {
-            // Log an error or handle the case where subjectContext is not set
+    public ResponseEntity<String> processIncomingIds(AttendanceRecordRequestDTO request) {
+
+        // Check if subjectContext is not set, or, not taking attendance
+        if (!takingAttendance || (subjectContext == null)) {
             System.out.println(takingAttendance + ", " + request.getStudentID());
             System.out.println("Either not taking attendance or subject context not sent");
-        }
-    }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Either not taking attendance or subject context not sent");
 
+        }
+
+        // Check if request already processed for this rollNumber from cache
+        if (isDuplicateRequest(request.getStudentID())) {
+            System.out.println("Duplicate Request for: " + request.getStudentID());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate attendance request");
+        }
+
+
+        // Associate studentIds with subject details and update the attendance table
+        String rollNumber = convertIdToRoll(request.getStudentID());
+        publishAttendance(subjectContext, rollNumber);
+
+        return ResponseEntity.ok("Attendance processed successfully.");
+
+    }
 
     // Process attendance for one student with subject context
     private void publishAttendance(AttendanceSubjectDetails subjectDetails, String rollNumber) {
@@ -247,7 +291,7 @@ public class AttendenceServiceImpl implements AttendanceService {
                 .proxy(proxy)
                 .build();
 
-        
+        // TODO: Uncomment to save attendance record to database
         // attendanceRepository.save(newAttendance);
         System.out.println(newAttendance);
     }
@@ -257,14 +301,16 @@ public class AttendenceServiceImpl implements AttendanceService {
     public void stopTakingAttendance() {
         // Stop taking attendance
         if (takingAttendance) {
-            markAbsentForCurrentDate(this.subjectContext.getSubjectID(), this.subjectContext.getDate(), this.getSubjectContext().isProxy());
+            markAbsentForCurrentDate(this.subjectContext.getSubjectID(), this.subjectContext.getDate(),
+                    this.getSubjectContext().isProxy());
 
             this.takingAttendance = false;
             this.subjectContext = null;
 
+            // Clear the cache when endAttendance is called, or, when 30mins over
+            clearCache();
         }
     }
-
 
     // If "STOP" attendance not sent, stop taking attendance automatically, check if
     // taking attendance, if taking
@@ -274,6 +320,5 @@ public class AttendenceServiceImpl implements AttendanceService {
     public void stopTakingAttendanceAutomatically() {
         stopTakingAttendance();
     }
-
 
 }

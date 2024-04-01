@@ -3,6 +3,7 @@ package com.attendance.microservices.attendanceapp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -89,15 +90,10 @@ public class AttendanceController {
         return ResponseEntity.ok("Attendance stopped.");
     }
 
+
     // Handle incoming attendance requests
     @PostMapping("/publish")
-    public String publishAttendanceRecord(@RequestBody AttendanceRecordRequestDTO request) {
-
-        System.out.println(request);
-
-        // attendanceService.processIncomingIds(request);
-
-        return "SUCCESS";
+    public ResponseEntity<String> publishAttendanceRecord(@RequestBody AttendanceRecordRequestDTO request) {
+        return attendanceService.processIncomingIds(request);
     }
-
 }

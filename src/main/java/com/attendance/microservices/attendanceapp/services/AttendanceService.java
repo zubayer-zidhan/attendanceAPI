@@ -2,6 +2,7 @@ package com.attendance.microservices.attendanceapp.services;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.attendance.microservices.attendanceapp.dto.AttendanceDetailsSubjectResponse;
@@ -16,7 +17,7 @@ public interface AttendanceService {
     public void stopTakingAttendanceAutomatically();
     public void setSubjectContext(AttendanceSubjectDetails subjectDetails);
 
-    public void processIncomingIds(AttendanceRecordRequestDTO request);
+    public ResponseEntity<String> processIncomingIds(AttendanceRecordRequestDTO request);
 
     public List<Attendance> getAttendanceDetails();
     public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectId(String subjectId);
@@ -24,4 +25,7 @@ public interface AttendanceService {
 
     public boolean getTakingAttendance();
     public AttendanceSubjectDetails getSubjectContext();
+
+    public boolean isDuplicateRequest(String rollNumber);
+    public void clearCache();
 }
