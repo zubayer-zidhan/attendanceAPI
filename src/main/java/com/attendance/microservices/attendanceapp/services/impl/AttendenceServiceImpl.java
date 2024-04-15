@@ -19,10 +19,14 @@ import com.attendance.microservices.attendanceapp.dto.AttendanceDetailsSubjectRe
 import com.attendance.microservices.attendanceapp.dto.AttendanceRecordRequestDTO;
 import com.attendance.microservices.attendanceapp.dto.AttendanceSubjectDetails;
 import com.attendance.microservices.attendanceapp.entities.Attendance;
+import com.attendance.microservices.attendanceapp.entities.IdRoll;
+import com.attendance.microservices.attendanceapp.entities.RfidRoll;
 import com.attendance.microservices.attendanceapp.entities.StudentSubjects;
 import com.attendance.microservices.attendanceapp.entities.Students;
 import com.attendance.microservices.attendanceapp.entities.Subjects;
 import com.attendance.microservices.attendanceapp.repository.AttendanceRepository;
+import com.attendance.microservices.attendanceapp.repository.IdRollRepository;
+import com.attendance.microservices.attendanceapp.repository.RfidRollRepository;
 import com.attendance.microservices.attendanceapp.repository.StudentSubjectsRepository;
 import com.attendance.microservices.attendanceapp.repository.StudentsRepository;
 import com.attendance.microservices.attendanceapp.repository.SubjectsRepository;
@@ -35,6 +39,12 @@ public class AttendenceServiceImpl implements AttendanceService {
     private AttendanceSubjectDetails subjectContext;
     private Map<String, Long> recentRollNumbers = new ConcurrentHashMap<>();
 
+    // Reader Types
+    private enum ReaderType {
+        BARCODE,
+        RFID
+    }
+
     @Autowired
     AttendanceRepository attendanceRepository;
 
@@ -46,6 +56,12 @@ public class AttendenceServiceImpl implements AttendanceService {
 
     @Autowired
     StudentSubjectsRepository studentSubjectsRepository;
+
+    @Autowired
+    IdRollRepository idRollRepository;
+
+    @Autowired
+    RfidRollRepository rfidRollRepository;
 
     // Start taking attendance, i.e. set "takingAttendance" = true
     @Override
@@ -143,9 +159,29 @@ public class AttendenceServiceImpl implements AttendanceService {
     }
 
     // Convert idCard(barcode ID) to student roll number
-    // TODO: Implement the converter
-    private String convertIdToRoll(String id) {
-        return id;
+    // TODO: Converter Function
+    private String convertIdToRoll(String id, ReaderType reader) {
+
+        // If reader = barcode
+        if (reader == ReaderType.BARCODE) {
+            IdRoll idRoll = idRollRepository.findFirstByCardNumber(id);
+
+            if (idRoll == null) {
+                return "INVALID";
+            } 
+
+            System.out.println(idRoll.getRollNumber());
+            return idRoll.getRollNumber();
+        } else {
+
+            RfidRoll rfidRoll = rfidRollRepository.findFirstByRfidNumber(id);
+            if (rfidRoll == null) {
+                return "INVALID";
+            } 
+
+            System.out.println(rfidRoll.getRollNumber());
+            return rfidRoll.getRollNumber();
+        }
     }
 
     // Get Attendance Data by Subject
@@ -258,13 +294,18 @@ public class AttendenceServiceImpl implements AttendanceService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate attendance request");
         }
 
-
         // Associate studentIds with subject details and update the attendance table
-        String rollNumber = convertIdToRoll(request.getStudentID());
+        // TODO: Change reader type
+        String rollNumber = convertIdToRoll(request.getStudentID(), ReaderType.BARCODE);
+
+        // If rollNumber does not exist
+        if (rollNumber == "INVALID") {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Roll Number not found");
+        }
+
+        // If corresponding roll number found, then process attendance
         publishAttendance(subjectContext, rollNumber);
-
         return ResponseEntity.ok("Attendance processed successfully.");
-
     }
 
     // Process attendance for one student with subject context
