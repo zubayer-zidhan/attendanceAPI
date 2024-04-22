@@ -168,16 +168,18 @@ public class AttendenceServiceImpl implements AttendanceService {
 
             if (idRoll == null) {
                 return "INVALID";
-            } 
+            }
 
             System.out.println(idRoll.getRollNumber());
             return idRoll.getRollNumber();
-        } else {
+        } 
+        // If reader = rfid
+        else {
 
             RfidRoll rfidRoll = rfidRollRepository.findFirstByRfidNumber(id);
             if (rfidRoll == null) {
                 return "INVALID";
-            } 
+            }
 
             System.out.println(rfidRoll.getRollNumber());
             return rfidRoll.getRollNumber();
@@ -315,19 +317,22 @@ public class AttendenceServiceImpl implements AttendanceService {
         String date = subjectDetails.getDate();
         boolean proxy = subjectDetails.isProxy();
 
-        // System.out.println("Subject: " + subjectID);
-        // System.out.println("Date: " + date);
-        // System.out.println("Student Roll Number: " + rollNumber);
-        // System.out.println("Proxy: " + proxy);
-
         Students currentStudent = studentsRepository.findFirstByRollNumber(rollNumber);
         Subjects currentSubject = subjectsRepository.findFirstById(subjectID);
+
+        // Query the database to find the maximum class number for the given subject and
+        // date
+        Integer maxClassNumber = attendanceRepository.findMaxClassNumberBySubjectIdAndDate(subjectID, date);
+
+        // Determine the class number (max + 1)
+        int classNumber = maxClassNumber + 1;
 
         // Implement the logic to update the attendance table
         Attendance newAttendance = Attendance.builder()
                 .subject(currentSubject)
                 .student(currentStudent)
                 .date(date)
+                .classNumber(classNumber)
                 .present(true)
                 .proxy(proxy)
                 .build();

@@ -17,8 +17,10 @@ import com.attendance.microservices.attendanceapp.dto.AttendanceDetailsSubjectRe
 import com.attendance.microservices.attendanceapp.dto.AttendanceRecordRequestDTO;
 import com.attendance.microservices.attendanceapp.dto.AttendanceSubjectDetails;
 import com.attendance.microservices.attendanceapp.dto.IotSignalDTO;
+import com.attendance.microservices.attendanceapp.dto.TakingAttendanceDTO;
 import com.attendance.microservices.attendanceapp.entities.Attendance;
 import com.attendance.microservices.attendanceapp.services.AttendanceService;
+
 
 @CrossOrigin
 @RestController
@@ -95,4 +97,17 @@ public class AttendanceController {
     public ResponseEntity<String> publishAttendanceRecord(@RequestBody AttendanceRecordRequestDTO request) {
         return attendanceService.processIncomingIds(request);
     }
+
+
+    // Get Taking Attendance Value
+    @GetMapping("/getTakingAttendance")
+    public TakingAttendanceDTO getMethodName() {
+
+        TakingAttendanceDTO takingAttendanceDTO = TakingAttendanceDTO.builder()
+                                                    .takingAttendance(attendanceService.getTakingAttendance())
+                                                    .build();
+
+        return takingAttendanceDTO;
+    }
+    
 }
