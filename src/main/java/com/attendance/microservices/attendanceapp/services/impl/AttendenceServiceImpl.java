@@ -37,6 +37,7 @@ public class AttendenceServiceImpl implements AttendanceService {
 
     private boolean takingAttendance = false;
     private AttendanceSubjectDetails subjectContext;
+    private int classNumber = 0;
     private Map<String, Long> recentRollNumbers = new ConcurrentHashMap<>();
 
     // Reader Types
@@ -73,6 +74,14 @@ public class AttendenceServiceImpl implements AttendanceService {
     @Override
     public void setSubjectContext(AttendanceSubjectDetails subjectDetails) {
         this.subjectContext = subjectDetails;
+        // Query the database to find the maximum class number for the given subject and
+        // date
+        Integer maxClassNumber = attendanceRepository.findMaxClassNumberBySubjectIdAndDate(subjectDetails.getSubjectID(), subjectDetails.getDate());
+
+        // Determine the class number (max + 1)
+        this.classNumber = maxClassNumber + 1;
+
+        System.out.println("Set context: " + "ClassNumber: " + this.classNumber);
     }
 
     // Get All attendance details of all students
@@ -320,12 +329,6 @@ public class AttendenceServiceImpl implements AttendanceService {
         Students currentStudent = studentsRepository.findFirstByRollNumber(rollNumber);
         Subjects currentSubject = subjectsRepository.findFirstById(subjectID);
 
-        // Query the database to find the maximum class number for the given subject and
-        // date
-        Integer maxClassNumber = attendanceRepository.findMaxClassNumberBySubjectIdAndDate(subjectID, date);
-
-        // Determine the class number (max + 1)
-        int classNumber = maxClassNumber + 1;
 
         // Implement the logic to update the attendance table
         Attendance newAttendance = Attendance.builder()
@@ -352,6 +355,7 @@ public class AttendenceServiceImpl implements AttendanceService {
 
             this.takingAttendance = false;
             this.subjectContext = null;
+            this.classNumber = 0;
 
             // Clear the cache when endAttendance is called, or, when 30mins over
             clearCache();
