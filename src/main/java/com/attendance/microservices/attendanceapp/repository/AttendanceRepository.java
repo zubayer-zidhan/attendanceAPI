@@ -10,6 +10,7 @@ import com.attendance.microservices.attendanceapp.entities.Attendance;
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
    List<Attendance> findAllBySubjectIdOrderByStudentRollNumber(String subjectId);
    List<Attendance> findAllBySubjectIdAndDate(String subjectId, String date);
+   List<Attendance> findAllBySubjectIdAndDateAndClassNumber(String subjectId, String date, int classNumber);
 
    @Query("SELECT COALESCE(MAX(a.classNumber), 0) FROM Attendance a WHERE a.subject.id = :subjectId AND a.date = :date")
    int findMaxClassNumberBySubjectIdAndDate(String subjectId, String date);

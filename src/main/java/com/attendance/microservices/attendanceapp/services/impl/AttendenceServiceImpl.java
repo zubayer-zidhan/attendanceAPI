@@ -132,10 +132,10 @@ public class AttendenceServiceImpl implements AttendanceService {
     }
 
     // Mark the remainder of students as absent
-    private void markAbsentForCurrentDate(String subjectID, String currentDate, boolean proxy) {
+    private void markAbsentForCurrentDate(String subjectID, String currentDate, boolean proxy, int classNumber) {
 
         // Retrieve attendance records for the current date
-        List<Attendance> attendanceRecords = attendanceRepository.findAllBySubjectIdAndDate(subjectID, currentDate);
+        List<Attendance> attendanceRecords = attendanceRepository.findAllBySubjectIdAndDateAndClassNumber(subjectID, currentDate, classNumber);
 
         // Retrieve all subjects (assuming you have a method to fetch all subjects)
         List<StudentSubjects> studentSubjectsList = studentSubjectsRepository.findAllBySubjectId(subjectID);
@@ -155,6 +155,7 @@ public class AttendenceServiceImpl implements AttendanceService {
                         .student(studentSubject.getStudent())
                         .subject(studentSubject.getSubject())
                         .date(currentDate)
+                        .classNumber(classNumber)
                         .present(false)
                         .proxy(proxy)
                         .build();
@@ -351,7 +352,7 @@ public class AttendenceServiceImpl implements AttendanceService {
         // Stop taking attendance
         if (takingAttendance) {
             markAbsentForCurrentDate(this.subjectContext.getSubjectID(), this.subjectContext.getDate(),
-                    this.getSubjectContext().isProxy());
+                    this.getSubjectContext().isProxy(), this.classNumber);
 
             this.takingAttendance = false;
             this.subjectContext = null;
