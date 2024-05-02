@@ -17,6 +17,7 @@ import com.attendance.microservices.attendanceapp.dto.AttendanceDetailsSubjectRe
 import com.attendance.microservices.attendanceapp.dto.AttendanceRecordRequestDTO;
 import com.attendance.microservices.attendanceapp.dto.AttendanceSubjectDetails;
 import com.attendance.microservices.attendanceapp.dto.IotSignalDTO;
+import com.attendance.microservices.attendanceapp.dto.ReaderTypeDTO;
 import com.attendance.microservices.attendanceapp.dto.TakingAttendanceDTO;
 import com.attendance.microservices.attendanceapp.entities.Attendance;
 import com.attendance.microservices.attendanceapp.services.AttendanceService;
@@ -109,5 +110,19 @@ public class AttendanceController {
 
         return takingAttendanceDTO;
     }
+
+
+    // Set Reader Type (RFID/Barcode)
+    @PostMapping("/setReaderType")
+    public ResponseEntity<String> setReaderType(@RequestBody ReaderTypeDTO request) {
+        return attendanceService.setReaderType(request.getReaderID());
+    }
+
+
+    // Get current reader type
+    @GetMapping("/getReaderType")
+    public ResponseEntity<String> getReaderType() {
+        return attendanceService.getReaderType();
+    } 
     
 }

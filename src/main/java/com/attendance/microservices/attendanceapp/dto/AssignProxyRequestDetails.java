@@ -1,20 +1,17 @@
 package com.attendance.microservices.attendanceapp.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * AttendanceDataDTO
- */
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class AttendanceDataDTO {
-    String date;
-    int classNumber;
-    boolean present;
+@AllArgsConstructor
+public class AssignProxyRequestDetails {
+    private List<TeachersListDTO> teachers;
+    private List<SubjectsListDTO> subjects;
 }

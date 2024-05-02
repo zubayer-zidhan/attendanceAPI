@@ -24,6 +24,7 @@ import com.attendance.microservices.attendanceapp.entities.RfidRoll;
 import com.attendance.microservices.attendanceapp.entities.StudentSubjects;
 import com.attendance.microservices.attendanceapp.entities.Students;
 import com.attendance.microservices.attendanceapp.entities.Subjects;
+import com.attendance.microservices.attendanceapp.enums.ReaderType;
 import com.attendance.microservices.attendanceapp.repository.AttendanceRepository;
 import com.attendance.microservices.attendanceapp.repository.IdRollRepository;
 import com.attendance.microservices.attendanceapp.repository.RfidRollRepository;
@@ -33,18 +34,16 @@ import com.attendance.microservices.attendanceapp.repository.SubjectsRepository;
 import com.attendance.microservices.attendanceapp.services.AttendanceService;
 
 @Service
-public class AttendenceServiceImpl implements AttendanceService {
-
+public class AttendanceServiceImpl implements AttendanceService {
+    
     private boolean takingAttendance = false;
     private AttendanceSubjectDetails subjectContext;
     private int classNumber = 0;
     private Map<String, Long> recentRollNumbers = new ConcurrentHashMap<>();
 
-    // Reader Types
-    private enum ReaderType {
-        BARCODE,
-        RFID
-    }
+    // By Default Reader = BARCODE
+    private ReaderType readerType = ReaderType.BARCODE;
+
 
     @Autowired
     AttendanceRepository attendanceRepository;
@@ -83,6 +82,28 @@ public class AttendenceServiceImpl implements AttendanceService {
 
         System.out.println("Set context: " + "ClassNumber: " + this.classNumber);
     }
+
+
+    // Set reader type(Barcode or RFID)
+    @Override
+    public ResponseEntity<String> setReaderType(int readerID) {
+        // If 1 -> BARCODE, 2 -> RFID
+        if(readerID == 1) {
+            this.readerType = ReaderType.BARCODE;
+            return ResponseEntity.ok("Current Reader Type: " + readerType);
+        } else if(readerID == 2) {
+            this.readerType = ReaderType.RFID;
+            return ResponseEntity.ok("Current Reader Type: " + readerType);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No corresponding reader found for given readerID(" + readerID +").");
+        }
+    }
+
+    // Get current reader type
+    @Override
+    public ResponseEntity<String> getReaderType() {
+        return ResponseEntity.ok("Current Reader Type: " + readerType);
+    } 
 
     // Get All attendance details of all students
     @Override
@@ -212,6 +233,7 @@ public class AttendenceServiceImpl implements AttendanceService {
                         .get(attendance.getStudent().getRollNumber());
                 AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
                         .date(attendance.getDate())
+                        .classNumber(attendance.getClassNumber())
                         .present(attendance.isPresent())
                         .build();
 
@@ -221,6 +243,7 @@ public class AttendenceServiceImpl implements AttendanceService {
                 List<AttendanceDataDTO> tempList = new ArrayList<>();
                 AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
                         .date(attendance.getDate())
+                        .classNumber(attendance.getClassNumber())
                         .present(attendance.isPresent())
                         .build();
                 tempList.add(tempDTO);

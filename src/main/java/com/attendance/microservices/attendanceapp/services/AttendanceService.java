@@ -16,12 +16,14 @@ public interface AttendanceService {
     public void stopTakingAttendance();
     public void stopTakingAttendanceAutomatically();
     public void setSubjectContext(AttendanceSubjectDetails subjectDetails);
+    public ResponseEntity<String> setReaderType(int readerID);
 
     public ResponseEntity<String> processIncomingIds(AttendanceRecordRequestDTO request);
 
     public List<Attendance> getAttendanceDetails();
     public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectId(String subjectId);
     public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(String subjectI, String date);
+    public ResponseEntity<String> getReaderType();
 
     public boolean getTakingAttendance();
     public AttendanceSubjectDetails getSubjectContext();

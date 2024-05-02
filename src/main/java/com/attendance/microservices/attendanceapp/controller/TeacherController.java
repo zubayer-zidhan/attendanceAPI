@@ -19,6 +19,7 @@ public class TeacherController {
     @Autowired
     TeacherService teacherService;
 
+    // Get all details for a given teacher
     @GetMapping("/details/{username}")
     public List<TeacherDetailsResponse> getTeacherSubjects(
         @PathVariable String username

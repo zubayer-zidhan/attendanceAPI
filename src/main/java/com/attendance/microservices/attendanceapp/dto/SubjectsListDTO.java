@@ -5,16 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * AttendanceDataDTO
- */
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttendanceDataDTO {
-    String date;
-    int classNumber;
-    boolean present;
+public class SubjectsListDTO {
+    private String name;
+    private String id;
 }
