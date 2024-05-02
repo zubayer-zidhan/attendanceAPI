@@ -60,6 +60,7 @@ public class TeacherServiceImpl implements TeacherService {
                         .semester(subject.getSubject().getSemester())
                         .subject(subject.getSubject().getName())
                         .subjectId(subject.getSubject().getId())
+                        .proxy(false)
                         .build();
 
                 ownSubjects.add(tempResponse);
@@ -72,6 +73,7 @@ public class TeacherServiceImpl implements TeacherService {
                         .semester(subject.getSubject().getSemester())
                         .subject(subject.getSubject().getName())
                         .subjectId(subject.getSubject().getId())
+                        .proxy(true)
                         .build();
 
                 assignedSubjects.add(tempResponse);

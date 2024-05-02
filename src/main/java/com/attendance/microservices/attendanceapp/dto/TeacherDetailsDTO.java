@@ -15,4 +15,5 @@ public class TeacherDetailsDTO {
     String subject;
     String subjectId;
     int semester;  
+    boolean proxy;
 }
