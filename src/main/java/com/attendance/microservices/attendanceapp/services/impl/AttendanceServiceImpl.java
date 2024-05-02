@@ -117,6 +117,11 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     @Override
+    public int getClassNumber() {
+        return this.classNumber;
+    }
+
+    @Override
     public boolean getTakingAttendance() {
         return this.takingAttendance;
     }
@@ -190,7 +195,6 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
 
     // Convert idCard(barcode ID) to student roll number
-    // TODO: Converter Function
     private String convertIdToRoll(String id, ReaderType reader) {
 
         // If reader = barcode
@@ -266,10 +270,10 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     // Get Attendance Data by Subject and Date
     @Override
-    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(String subjectId,
-            String date) {
+    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDateAndClassNumber(String subjectId,
+            String date, int classNumber) {
 
-        List<Attendance> attendanceList = attendanceRepository.findAllBySubjectIdAndDate(subjectId, date);
+        List<Attendance> attendanceList = attendanceRepository.findAllBySubjectIdAndDateAndClassNumber(subjectId, date, classNumber);
 
         Map<String, AttendanceDetailsSubjectResponse> studentAttendanceMap = new HashMap<>();
 
@@ -281,6 +285,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                         .get(attendance.getStudent().getRollNumber());
                 AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
                         .date(attendance.getDate())
+                        .classNumber(attendance.getClassNumber())
                         .present(attendance.isPresent())
                         .build();
 
@@ -290,6 +295,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 List<AttendanceDataDTO> tempList = new ArrayList<>();
                 AttendanceDataDTO tempDTO = AttendanceDataDTO.builder()
                         .date(attendance.getDate())
+                        .classNumber(attendance.getClassNumber())
                         .present(attendance.isPresent())
                         .build();
                 tempList.add(tempDTO);
@@ -330,8 +336,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         }
 
         // Associate studentIds with subject details and update the attendance table
-        // TODO: Change reader type
-        String rollNumber = convertIdToRoll(request.getStudentID(), ReaderType.BARCODE);
+        String rollNumber = convertIdToRoll(request.getStudentID(), readerType);
 
         // If rollNumber does not exist
         if (rollNumber == "INVALID") {
@@ -343,6 +348,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         return ResponseEntity.ok("Attendance processed successfully.");
     }
 
+    
     // Process attendance for one student with subject context
     private void publishAttendance(AttendanceSubjectDetails subjectDetails, String rollNumber) {
 

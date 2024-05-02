@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.attendance.microservices.attendanceapp.dto.ApiResponse;
 import com.attendance.microservices.attendanceapp.dto.AttendanceDetailsSubjectResponse;
 import com.attendance.microservices.attendanceapp.dto.AttendanceRecordRequestDTO;
 import com.attendance.microservices.attendanceapp.dto.AttendanceSubjectDetails;
 import com.attendance.microservices.attendanceapp.dto.IotSignalDTO;
 import com.attendance.microservices.attendanceapp.dto.ReaderTypeDTO;
+import com.attendance.microservices.attendanceapp.dto.TakeAttendanceResponseDTO;
 import com.attendance.microservices.attendanceapp.dto.TakingAttendanceDTO;
 import com.attendance.microservices.attendanceapp.entities.Attendance;
 import com.attendance.microservices.attendanceapp.services.AttendanceService;
@@ -45,16 +47,19 @@ public class AttendanceController {
         return attendanceService.getAttendanceDetailsBySubjectId(subjectId);
     }
 
-    @GetMapping("/details/{subjectId}/{date}")
+    @GetMapping("/details/{subjectId}/{date}/{classNumber}")
     public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(
             @PathVariable String subjectId,
-            @PathVariable String date) {
-        return attendanceService.getAttendanceDetailsBySubjectIdAndDate(subjectId, date);
+            @PathVariable String date,
+            @PathVariable int classNumber
+    ) {
+        return attendanceService.getAttendanceDetailsBySubjectIdAndDateAndClassNumber(subjectId, date, classNumber);
     }
 
     // Start taking attendance
     @PostMapping("/takeAttendance")
-    public ResponseEntity<String> takeAttendance(@RequestBody AttendanceSubjectDetails subjectDetails) {
+    public ResponseEntity<ApiResponse<TakeAttendanceResponseDTO>> takeAttendance(@RequestBody AttendanceSubjectDetails subjectDetails) {
+        ApiResponse<TakeAttendanceResponseDTO> response = new ApiResponse<>();
 
         // Save subjectDetails in a context variable or database
         // This context will be used to associate incoming IDs with subject details
@@ -62,34 +67,53 @@ public class AttendanceController {
             attendanceService.startTakingAttendance();
             attendanceService.setSubjectContext(subjectDetails);
 
-            System.out.println(attendanceService.getTakingAttendance());
-            System.out.println(attendanceService.getSubjectContext());
 
             // Send the "ON" signal to the IoT device
             IotSignalDTO onSignal = IotSignalDTO.builder().message("ON").build();
             messagingTemplate.convertAndSend("/topic/signal", onSignal);
 
-            return ResponseEntity.ok("Attendance started.");
+            
+            TakeAttendanceResponseDTO data = this.getAttendanceSessionData();
+           
+            response.setSuccess(true);
+            response.setMessage("Attendance Started.");
+            response.setData(data);
+
+            System.out.println(response.getData());
+
+            return ResponseEntity.ok(response);
         }
-        return ResponseEntity.ok("Already Taking Attendance.");
+        response.setSuccess(true);
+        response.setMessage("Already Taking Attendance.");
+        return ResponseEntity.ok(response);
 
     }
 
     // Stop taking attendance
     @PostMapping("/endAttendance")
-    public ResponseEntity<String> endAttendance() {
-        // Save subjectDetails in a context variable or database
-        // This context will be used to associate incoming IDs with subject details
-        attendanceService.stopTakingAttendance();
+    public ResponseEntity<ApiResponse<TakeAttendanceResponseDTO>> endAttendance() {
+        ApiResponse<TakeAttendanceResponseDTO> response = new ApiResponse<>();
 
-        System.out.println(attendanceService.getTakingAttendance());
-        System.out.println(attendanceService.getSubjectContext());
+        // Save previous context values to output context
+        TakeAttendanceResponseDTO data = this.getAttendanceSessionData();
+        
+
+        // Stop Taking Attendance, set everything to null
+        attendanceService.stopTakingAttendance();
 
         // Send the "OFF" signal to the IoT device
         IotSignalDTO offSignal = IotSignalDTO.builder().message("OFF").build();
         messagingTemplate.convertAndSend("/topic/signal", offSignal);
 
-        return ResponseEntity.ok("Attendance stopped.");
+
+        data.setTakingAttendance(false);
+        response.setSuccess(true);
+        response.setMessage("Attendance Stopped.");
+        response.setData(data);
+
+        System.out.println(response.getData());
+
+        return ResponseEntity.ok(response);
     }
 
 
@@ -125,4 +149,19 @@ public class AttendanceController {
         return attendanceService.getReaderType();
     } 
     
+
+
+    public TakeAttendanceResponseDTO getAttendanceSessionData() {
+        // Get context from attendance service
+        AttendanceSubjectDetails subjectContext = attendanceService.getSubjectContext();
+        
+        TakeAttendanceResponseDTO data = TakeAttendanceResponseDTO.builder()
+                                            .takingAttendance(attendanceService.getTakingAttendance())
+                                            .subjectID(subjectContext.getSubjectID())
+                                            .date(subjectContext.getDate())
+                                            .classNumber(attendanceService.getClassNumber())
+                                            .proxy(subjectContext.isProxy())
+                                            .build();
+        return data;
+    }
 }

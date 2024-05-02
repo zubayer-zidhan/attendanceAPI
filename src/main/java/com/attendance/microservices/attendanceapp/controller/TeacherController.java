@@ -1,7 +1,5 @@
 package com.attendance.microservices.attendanceapp.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +19,7 @@ public class TeacherController {
 
     // Get all details for a given teacher
     @GetMapping("/details/{username}")
-    public List<TeacherDetailsResponse> getTeacherSubjects(
+    public TeacherDetailsResponse getTeacherSubjects(
         @PathVariable String username
     ){
         return teacherService.getTeacherSubjects(username);

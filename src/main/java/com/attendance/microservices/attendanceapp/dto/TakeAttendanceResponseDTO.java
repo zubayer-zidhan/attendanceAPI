@@ -1,6 +1,5 @@
 package com.attendance.microservices.attendanceapp.dto;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,9 +7,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class TeacherDetailsResponse {
-    List<TeacherDetailsDTO> ownSubjects;
-    List<TeacherDetailsDTO> assignedSubjects;
+@AllArgsConstructor
+public class TakeAttendanceResponseDTO {
+    boolean takingAttendance;
+    String subjectID;
+    String date;
+    int classNumber;
+    boolean proxy;
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.attendance.microservices.attendanceapp.dto.TeacherDetailsDTO;
 import com.attendance.microservices.attendanceapp.dto.TeacherDetailsResponse;
 import com.attendance.microservices.attendanceapp.entities.SubjectTeachers;
 import com.attendance.microservices.attendanceapp.entities.SubstituteAssignments;
@@ -29,7 +30,7 @@ public class TeacherServiceImpl implements TeacherService {
     SubstituteAssignmentsRepository substituteAssignmentsRepository;
 
     @Override
-    public List<TeacherDetailsResponse> getTeacherSubjects(String username) {
+    public TeacherDetailsResponse getTeacherSubjects(String username) {
 
         Teachers teacher = teachersRepository.findFirstByUserUsername(username);
 
@@ -48,32 +49,38 @@ public class TeacherServiceImpl implements TeacherService {
             List<SubstituteAssignments> substituteList = substituteAssignmentsRepository.findAllByTeacherIdAndDate(teacherID, currentDate);
 
             // Create a new empty response
-            List<TeacherDetailsResponse> teacherDetails = new ArrayList<>();
+            List<TeacherDetailsDTO> ownSubjects = new ArrayList<>();
+            List<TeacherDetailsDTO> assignedSubjects = new ArrayList<>();
 
 
             // Iterate over all entries from "subject_teachers"
             for (SubjectTeachers subject : subjectsList) {
-                TeacherDetailsResponse tempResponse = TeacherDetailsResponse.builder()
+                TeacherDetailsDTO tempResponse = TeacherDetailsDTO.builder()
                         .department(subject.getSubject().getDepartment().getName())
                         .semester(subject.getSubject().getSemester())
                         .subject(subject.getSubject().getName())
                         .subjectId(subject.getSubject().getId())
                         .build();
 
-                teacherDetails.add(tempResponse);
+                ownSubjects.add(tempResponse);
             }
 
             // Iterate over all entries from "substitute_assignments"
             for (SubstituteAssignments subject : substituteList) {
-                TeacherDetailsResponse tempResponse = TeacherDetailsResponse.builder()
+                TeacherDetailsDTO tempResponse = TeacherDetailsDTO.builder()
                         .department(subject.getSubject().getDepartment().getName())
                         .semester(subject.getSubject().getSemester())
                         .subject(subject.getSubject().getName())
                         .subjectId(subject.getSubject().getId())
                         .build();
 
-                teacherDetails.add(tempResponse);
+                assignedSubjects.add(tempResponse);
             }
+
+            TeacherDetailsResponse teacherDetails = TeacherDetailsResponse.builder()
+                                                        .ownSubjects(ownSubjects)
+                                                        .assignedSubjects(assignedSubjects)
+                                                        .build();
 
             return teacherDetails;
         }

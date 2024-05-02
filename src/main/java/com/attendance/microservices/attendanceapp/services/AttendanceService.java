@@ -22,11 +22,12 @@ public interface AttendanceService {
 
     public List<Attendance> getAttendanceDetails();
     public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectId(String subjectId);
-    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDate(String subjectI, String date);
+    public List<AttendanceDetailsSubjectResponse> getAttendanceDetailsBySubjectIdAndDateAndClassNumber(String subjectI, String date, int classNumber);
     public ResponseEntity<String> getReaderType();
 
     public boolean getTakingAttendance();
     public AttendanceSubjectDetails getSubjectContext();
+    public int getClassNumber();
 
     public boolean isDuplicateRequest(String rollNumber);
     public void clearCache();
