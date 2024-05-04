@@ -345,7 +345,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         // If corresponding roll number found, then process attendance
         publishAttendance(subjectContext, rollNumber);
-        return ResponseEntity.ok("Attendance processed successfully.");
+        return ResponseEntity.ok("Attendance processed successfully for roll number: " + rollNumber + ".");
     }
 
     
