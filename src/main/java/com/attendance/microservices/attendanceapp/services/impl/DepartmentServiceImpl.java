@@ -20,6 +20,7 @@ import com.attendance.microservices.attendanceapp.entities.Teachers;
 import com.attendance.microservices.attendanceapp.repository.DepartmentsRepository;
 import com.attendance.microservices.attendanceapp.repository.SubjectTeachersRepository;
 import com.attendance.microservices.attendanceapp.repository.SubjectsRepository;
+import com.attendance.microservices.attendanceapp.repository.SubstituteAssignmentsRepository;
 import com.attendance.microservices.attendanceapp.repository.TeachersRepository;
 import com.attendance.microservices.attendanceapp.services.DepartmentService;
 
@@ -36,6 +37,9 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
     SubjectsRepository subjectsRepository;
+
+    @Autowired
+    SubstituteAssignmentsRepository substituteAssignmentsRepository;
 
     // Find all departments
     @Override
@@ -65,10 +69,9 @@ public class DepartmentServiceImpl implements DepartmentService {
                         .id(teacher.getId())
                         .build();
 
-                        teachersListDTOs.add(tempResponse);
+                teachersListDTOs.add(tempResponse);
             }
 
-            
             // Find all subjects for given teacher
             List<SubjectTeachers> subjectsList = subjectTeachersRepository.findAllByTeacherId(currTeacher.getId());
 
@@ -87,14 +90,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
             // Add allSubjects and allTeachers to allDetails
             AssignProxyRequestDetails allDetails = AssignProxyRequestDetails.builder()
-                                                    .subjects(allSubjectsList)
-                                                    .teachers(teachersListDTOs)
-                                                    .build();
-            
+                    .subjects(allSubjectsList)
+                    .teachers(teachersListDTOs)
+                    .build();
+
             return allDetails;
         }
     }
-
 
     // Assign proxy to a particular teacher
     @Override
@@ -103,23 +105,19 @@ public class DepartmentServiceImpl implements DepartmentService {
         Subjects subject = subjectsRepository.findById(request.getSubjectId()).orElse(null);
         Teachers teacher = teachersRepository.findById(request.getSubstituteTeacherId()).orElse(null);
 
-        if(subject == null || teacher == null) {
+        if (subject == null || teacher == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid subjectId or teacherId");
         }
 
         SubstituteAssignments newAssignment = SubstituteAssignments.builder()
-                                                .subject(subject)
-                                                .teacher(teacher)
-                                                .date(request.getDate())
-                                                .build();
-
+                .subject(subject)
+                .teacher(teacher)
+                .date(request.getDate())
+                .build();
 
         System.out.println("PROXY: " + newAssignment);
-        return ResponseEntity.ok("Added Proxy assignment for teacher: " + teacher.getName() +", and, subject: " + subject.getName());
+        // TODO: Uncomment to save
+        substituteAssignmentsRepository.save(newAssignment);
+        return ResponseEntity.ok("Added Proxy assignment for teacher: " + teacher.getName() + ", and, subject: " + subject.getName());
     }
-
-
-
-    
-    
 }
