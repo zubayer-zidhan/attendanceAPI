@@ -58,7 +58,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         } else {
 
             // Find all teachers belonging to same department
-            List<Teachers> allTeachersList = teachersRepository.findAllByDeptId(currTeacher.getDeptId());
+            List<Teachers> allTeachersList = teachersRepository.findAllByDepartmentId(currTeacher.getDepartment().getId());
 
             // Loop over all teachers in teachersList and add them to DTO
             List<TeachersListDTO> teachersListDTOs = new ArrayList<>();

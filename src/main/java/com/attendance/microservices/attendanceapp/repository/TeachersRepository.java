@@ -8,5 +8,5 @@ import com.attendance.microservices.attendanceapp.entities.Teachers;
 
 public interface TeachersRepository extends JpaRepository<Teachers, Integer>{
         Teachers findFirstByUserUsername(String username);
-        List<Teachers> findAllByDeptId(int deptID);
+        List<Teachers> findAllByDepartmentId(int deptID);
 }
